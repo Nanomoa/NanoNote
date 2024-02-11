@@ -184,7 +184,7 @@ function getNotes()
             res += `
                     <div id="tips" class="flex p-1.5  text-blue-500 transition-colors duration-200 bg-blue-100 rounded-lg dark:text-blue-400 dark:bg-gray-800" role="alert">
                         <div class="ms-3 text-sm font-medium">
-                            提示：退出前记得<a href="#" class="font-semibold underline hover:no-underline">CTRL + S</a>保存您的笔记，左侧按钮可以把笔记导出为docx/pdf文件。(单击右侧按钮关闭提示)
+                            提示：退出前记得<a href="#" class="font-semibold underline hover:no-underline">CTRL + S</a>保存您的笔记，左侧按钮可以把笔记导出为html/pdf文件。(单击右侧按钮关闭提示)
                         </div>
                         <button id="close-tips" onclick="closeTips()" type="button" class="ms-auto -mx-1.5 -my-1.5 bg-blue-50 text-blue-500 rounded-lg focus:ring-2 focus:ring-blue-400 p-1.5 hover:bg-blue-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-blue-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-1" aria-label="Close">
                             <span class="sr-only">Close</span>
