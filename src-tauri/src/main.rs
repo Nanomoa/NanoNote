@@ -22,6 +22,11 @@ fn get_all_md_files() -> Vec<String> {
   utils::file_util::FileUtil::new().get_md_files_in_dir(path.to_str().unwrap()).expect("Error_").into()
 }
 
+#[tauri::command(rename_all = "snake_case")]
+fn get_file_ino(path: String) -> u64 {
+  utils::file_util::FileUtil::new().get_ino(path).unwrap()
+}
+
 fn main() {
   // 首次进入应用在用户目录创建NanoNote目录
   let user_dir = match dirs::home_dir() {
@@ -51,7 +56,8 @@ fn main() {
       .invoke_handler(tauri::generate_handler![
         md_to_html,
         md_to_pdf,
-        get_all_md_files
+        get_all_md_files,
+        get_file_ino
       ])
       .run(tauri::generate_context!())
       .expect("error while running tauri application");

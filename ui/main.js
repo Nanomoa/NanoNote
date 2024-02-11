@@ -149,16 +149,28 @@ function getNotes()
 {
     invoke('get_all_md_files').then(
         (files) => {
-            let i = 1;
-            let res = "";
+            let res = `
+                    <div id="tips" class="flex p-1.5  text-blue-500 transition-colors duration-200 bg-blue-100 rounded-lg dark:text-blue-400 dark:bg-gray-800" role="alert">
+                        <div class="ms-3 text-sm font-medium">
+                            提示：退出前记得<a href="#" class="font-semibold underline hover:no-underline">CTRL + S</a>保存您的笔记，左侧按钮可以把笔记导出为html/pdf文件。(单击右侧按钮关闭提示)
+                        </div>
+                        <button id="close-tips" onclick="closeTips()" type="button" class="ms-auto -mx-1.5 -my-1.5 bg-blue-50 text-blue-500 rounded-lg focus:ring-2 focus:ring-blue-400 p-1.5 hover:bg-blue-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-blue-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-1" aria-label="Close">
+                            <span class="sr-only">Close</span>
+                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
             files.forEach(
                 (file_path) => {
+                    let ino = invoke('get_file_ino', {path: file_path});
                     let arr = file_path.toString().split('/');
                     let path_to_user = '.../' + arr[arr.length - 3] + '/' + arr[arr.length - 2] + '/' +  arr[arr.length - 1];
                     let file_name = arr[arr.length - 1].split('.')[0];
                     let item = `
-                    <button id="note-${i}" onclick="noteLeftClick(event)" oncontextmenu="noteRightClick(event)" class="flex items-center w-full px-5 py-2 transition-colors duration-200 dark:hover:bg-gray-800 gap-x-2 hover:bg-gray-100 focus:outline-none">
-                        <input id="note-${i}-id" type="text" hidden="hidden" readonly value="${file_path}">
+                    <button id="note-${ino}" onclick="noteLeftClick(event)" oncontextmenu="noteRightClick(event)" class="flex items-center w-full px-5 py-2 transition-colors duration-200 dark:hover:bg-gray-800 gap-x-2 hover:bg-gray-100 focus:outline-none">
+                        <input id="note-${ino}-id" type="text" hidden="hidden" readonly value="${file_path}">
                         <i class="fas fa-file-signature"></i>
                         <div class="text-left rtl:text-right">
                             <h1 class="text-sm font-medium text-gray-700 capitalize dark:text-white">${file_name}</h1>
@@ -166,7 +178,6 @@ function getNotes()
                         </div>
                     </button>
                         `;
-                    i++;
                     res += item;
                 }
             );
@@ -181,19 +192,6 @@ function getNotes()
                         </div>
                     `;
             }
-            res += `
-                    <div id="tips" class="flex p-1.5  text-blue-500 transition-colors duration-200 bg-blue-100 rounded-lg dark:text-blue-400 dark:bg-gray-800" role="alert">
-                        <div class="ms-3 text-sm font-medium">
-                            提示：退出前记得<a href="#" class="font-semibold underline hover:no-underline">CTRL + S</a>保存您的笔记，左侧按钮可以把笔记导出为html/pdf文件。(单击右侧按钮关闭提示)
-                        </div>
-                        <button id="close-tips" onclick="closeTips()" type="button" class="ms-auto -mx-1.5 -my-1.5 bg-blue-50 text-blue-500 rounded-lg focus:ring-2 focus:ring-blue-400 p-1.5 hover:bg-blue-200 inline-flex items-center justify-center h-8 w-8 dark:bg-gray-800 dark:text-blue-400 dark:hover:bg-gray-700" data-dismiss-target="#alert-1" aria-label="Close">
-                            <span class="sr-only">Close</span>
-                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                            </svg>
-                        </button>
-                    </div>
-                `;
             document.getElementById('note-list').innerHTML = res;
         }
     )

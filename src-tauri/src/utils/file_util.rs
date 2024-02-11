@@ -1,5 +1,6 @@
 use std::fs::File;
 use std::io::{Error, Read, Write};
+use std::os::unix::fs::MetadataExt;
 use chrono::{Datelike, Local, Timelike};
 
 pub struct FileUtil;
@@ -82,6 +83,7 @@ impl FileUtil {
         Ok(content)
     }
 
+    // 获取目录下所有md文件的绝对路径
     pub fn get_md_files_in_dir(&self, dir: &str) -> Result<Vec<String>, Error> {
         let mut markdown_files = Vec::new();
 
@@ -101,5 +103,25 @@ impl FileUtil {
         }
 
         Ok(markdown_files)
+    }
+
+    // 获取文件的inode编号
+    pub fn get_ino(&self, path: String) -> Result<u64, Error> {
+        let file_path = std::path::Path::new(&path);
+
+        if !file_path.exists() {
+            Ok(1145141919810)
+        }
+
+        let file_path_str = file_path.to_str().unwrap();
+
+        let ino = match std::fs::metadata(file_path_str) {
+            Ok(meta_data) => meta_data.ino(),
+            Err(e) => {
+                return Err(e);
+            }
+        };
+
+        Ok(ino)
     }
 }
