@@ -1,8 +1,6 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use serde::__private::ser::constrain;
-
 pub mod utils;
 
 // Md转Html
@@ -46,6 +44,27 @@ fn write_to_file(content: String, path: String) {
   utils::file_util::FileUtil::new().write_to_md_file(path.as_str(), content.as_str()).unwrap();
 }
 
+// 新建文件
+#[tauri::command(rename_all = "snake_case")]
+fn create_new_note(file_name: String) {
+  let path = std::path::Path::new(&dirs::home_dir().unwrap()).join("NanoNote").join("Notes").join(file_name.as_str());
+  utils::file_util::FileUtil::new().create_and_write(path.to_str().unwrap().to_string()).unwrap();
+}
+
+// 删除文件
+#[tauri::command(rename_all = "snake_case")]
+fn delete_note(file_name: String) {
+  let path = std::path::Path::new(&dirs::home_dir().unwrap()).join("NanoNote").join("Notes").join(file_name.as_str());
+  utils::file_util::FileUtil::new().remove(path.to_str().unwrap().to_string()).unwrap();
+}
+
+// 获取导出目录
+#[tauri::command(rename_all = "snake_case")]
+fn get_exp_dir() -> String {
+    let path = std::path::Path::new(&dirs::home_dir().unwrap()).join("NanoNote");
+    path.to_str().unwrap().to_string().into()
+}
+
 fn main() {
   // 首次进入应用在用户目录创建NanoNote目录
   let user_dir = match dirs::home_dir() {
@@ -70,12 +89,6 @@ fn main() {
     }
   }
 
-  // let content = get_file_content("/data/home/Nanomoa/NanoNote/Notes/测试文档.md".parse().unwrap());
-  // println!("{}", content);
-
-  // let cc = get_file_content("/data/home/Nanomoa/NanoNote/Notes/Markdown教程.md".parse().unwrap());
-  // println!("{}", cc);
-
   // 构建应用
   tauri::Builder::default()
       .invoke_handler(tauri::generate_handler![
@@ -84,7 +97,10 @@ fn main() {
         get_all_md_files,
         get_file_ino,
         get_file_content,
-        write_to_file
+        write_to_file,
+        create_new_note,
+        delete_note,
+          get_exp_dir
       ])
       .run(tauri::generate_context!())
       .expect("error while running tauri application");

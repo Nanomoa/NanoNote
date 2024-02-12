@@ -46,11 +46,10 @@ impl FileUtil {
             );
 
             let content = format!(r#"
-  ---
-  title: {}
-  date: {}
-  ---
-  "#, title, now_time_fmt);
+---
+title: {}
+date: {}
+---"#, title, now_time_fmt);
 
             if let Err(e) = md_file.write_all(content.as_bytes()) {
                 Err(e)
@@ -89,7 +88,7 @@ impl FileUtil {
         let mut file = File::open(file_path)?;
         let mut content = String::new();
         file.read_to_string(&mut content)?;
-        println!("{}", content);
+        // println!("{}", content);
         Ok(content)
     }
 

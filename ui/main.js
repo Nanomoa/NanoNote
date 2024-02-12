@@ -124,16 +124,93 @@ body.addEventListener('contextmenu', function(event)
     event.preventDefault();
 });
 
-// Md文本导出Html
-function exportHtml()
+// 显示提示弹窗
+function showTipPopup(tipMsg, btnMsg, inputPlaceHolder)
 {
-    invoke('md_to_html', {content: vditor.getHTML(), file_name: "output.html"});
+    let popup = document.getElementById("tip-pop");
+    document.getElementById("tip-msg").innerHTML = tipMsg;
+    document.getElementById("opt-btn").innerHTML = btnMsg;
+    document.getElementById("input-filename").value = "";
+    document.getElementById("input-filename").placeholder = inputPlaceHolder;
+    if(popup.style.display === "none") {
+        popup.style.display = "block";
+        document.getElementById("overlay").style.display = "block";
+    }
+}
+
+function closeTipPopup()
+{
+    let popup = document.getElementById("tip-pop");
+    if(popup.style.display === "block")
+    {
+        popup.style.display = "none";
+        document.getElementById("overlay").style.display = "none";
+    }
+}
+
+// 新建笔记
+async function createNote() {
+    let path = await invoke('get_exp_dir');
+    let msg = `新建笔记于 ${path}/Note`;
+    showTipPopup(msg, "确认新建", "请输入文件名(默认为NanoNote)");
+    let optBtn = document.getElementById("opt-btn");
+    optBtn.removeEventListener("click", exportHtml);
+    optBtn.removeEventListener("click", exportPdf);
+    optBtn.addEventListener("click", function() {
+        let inputFilenameTarget = document.getElementById("input-filename");
+        let filename = inputFilenameTarget.value;
+        if(filename === "")
+        {
+            filename = "NanoNote";
+        }
+        invoke('create_new_note', {file_name: filename + ".md"});
+        closeTipPopup();
+        getNotes().then(() => {});
+    });
+
+}
+
+// Md文本导出Html
+async function exportHtml()
+{
+    let path = await invoke('get_exp_dir');
+    let msg = `导出 Html 文件至 ${path}/Html`;
+    showTipPopup(msg, "确认导出", "请输入文件名(默认为output)");
+    let optBtn = document.getElementById("opt-btn");
+    optBtn.removeEventListener("click", exportPdf);
+    optBtn.removeEventListener("click", createNote);
+    optBtn.addEventListener("click", function() {
+        let inputFilenameTarget = document.getElementById("input-filename");
+        let filename = inputFilenameTarget.value;
+        if(filename === "")
+        {
+            filename = "output";
+        }
+        invoke('md_to_html', {content: vditor.getHTML(), file_name: filename + ".html"});
+        closeTipPopup();
+    });
+
 }
 
 // Md文本导出Pdf
-function exportPdf()
+async function exportPdf()
 {
-    invoke('md_to_pdf', {content: vditor.getHTML(), file_name: "output.pdf"});
+    let path = await invoke('get_exp_dir');
+    let msg = `导出 Pdf 文件至 ${path}/Pdf`;
+    showTipPopup(msg, "确认导出", "请输入文件名(默认为output)");
+    let optBtn = document.getElementById("opt-btn");
+    optBtn.removeEventListener("click", exportHtml);
+    optBtn.removeEventListener("click", createNote);
+    optBtn.addEventListener("click", function() {
+        let inputFilenameTarget = document.getElementById("input-filename");
+        let filename = inputFilenameTarget.value;
+        if(filename === "")
+        {
+            filename = "output";
+        }
+        invoke('md_to_pdf', {content: vditor.getHTML(), file_name: filename + ".pdf"});
+        closeTipPopup();
+    });
 }
 
 async function getNotes()
