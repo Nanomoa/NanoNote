@@ -18,11 +18,12 @@ impl ExportMd {
     pub fn to_html(&self, file_name: String) -> Result<(), Error> {
         let html_content = html_splice::HtmlSplice::new(self.content.clone()).get();
 
-        let path = std::path::Path::new(&dirs::home_dir().unwrap()).join("NanoNote").join("Html");
-        let path_str = path.to_str().unwrap();
-        let output_path = format!("{}/{}", path_str, file_name);
+        let path = std::path::Path::new(&dirs::home_dir().unwrap())
+            .join("NanoNote")
+            .join("Html")
+            .join(file_name);
 
-        let mut html_file = match File::create(output_path) {
+        let mut html_file = match File::create(path) {
             Ok(file) => file,
             Err(e) => {
                 return Err(e);
@@ -38,9 +39,8 @@ impl ExportMd {
 
     pub fn to_pdf(&self, file_name: String) -> Result<(), Error> {
         let path = std::path::Path::new("../nanomoa.html");
-        let path_str = path.to_str().unwrap();
 
-        let mut html_file = match File::create(path_str) {
+        let mut html_file = match File::create(path) {
             Ok(file) => file,
             Err(e) => {
                 return Err(e);
@@ -50,9 +50,12 @@ impl ExportMd {
         let absolute_path = std::fs::canonicalize(path).unwrap();
         let absolute_path_str = absolute_path.to_str().unwrap();
 
-        let pdf_path = std::path::Path::new(&dirs::home_dir().unwrap()).join("NanoNote").join("Pdf");
+        let pdf_path = std::path::Path::new(&dirs::home_dir().unwrap())
+            .join("NanoNote")
+            .join("Pdf")
+            .join(file_name);
+
         let pdf_path_str = pdf_path.to_str().unwrap();
-        let output_path = format!("{}/{}", pdf_path_str, file_name);
 
         let html_content = html_splice::HtmlSplice::new(self.content.clone()).get();
 
@@ -66,12 +69,12 @@ impl ExportMd {
             };
             html2pdf::html_to_pdf(
                 absolute_path_str,
-                output_path,
+                pdf_path_str,
                 PrintToPdfOptions::default(),
                 launch_options,
                 None,
             ).expect("Error");
-            std::fs::remove_file(path_str).expect("Error");
+            std::fs::remove_file(path).expect("Error");
             println!("Finish PDF conversion");
             Ok(())
         }

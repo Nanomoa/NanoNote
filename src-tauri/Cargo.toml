@@ -24,6 +24,7 @@ dirs = "5.0.1"
 html2pdf = "0.7.0"
 headless_chrome = "1.0.9"
 chrono = "0.4.33"
+cfg-if = "1.0.0"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.

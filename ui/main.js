@@ -43,7 +43,7 @@ let vditor = new Vditor('vditor', {
 });
 
 // 初始化列表
-getNotes();
+getNotes().then(() => {});
 
 // ctrl + s 保存
 document.addEventListener('keydown', function(event)
@@ -59,13 +59,17 @@ document.addEventListener('keydown', function(event)
 });
 
 // 笔记目录相关
+
 // 绑定左键点击事件
-function noteLeftClick(event)
+async function noteLeftClick(event)
 {
     if (event.button === 0)
     {
-        // todo
-        alert('左键点击');
+        let buttonTarget = event.currentTarget;
+        let file_path = buttonTarget.dataset.path;
+        let content = await invoke('get_file_content', {path: file_path});
+        vditor.setValue(content);
+        // alert('左键点击');
     }
 }
 
@@ -75,23 +79,10 @@ function noteRightClick(event)
     event.preventDefault();
     showContextMenu(event.clientX, event.clientY);
 
-    let dfs = (target) => {
-        if(target && target.tagName !== 'BUTTON')
-        {
-            dfs(target.parentNode);
-        }
-        return target;
-    };
+    let buttonTarget = event.currentTarget;
+    let file_path = buttonTarget.dataset.path;
 
-    let targetElement = dfs(event.target);
 
-    if(targetElement && targetElement.tagName === 'BUTTON')
-    {
-        let buttonId = targetElement.id;
-        let noteIdElem = buttonId + "-id";
-        let noteIdValue = document.getElementById(noteIdElem).value;
-        console.log(noteIdValue);
-    }
 
     // alert('右键点击');
 }
@@ -145,10 +136,10 @@ function exportPdf()
     invoke('md_to_pdf', {content: vditor.getHTML(), file_name: "output.pdf"});
 }
 
-function getNotes()
+async function getNotes()
 {
     invoke('get_all_md_files').then(
-        (files) => {
+        async (files) => {
             let res = `
                     <div id="tips" class="flex p-1.5  text-blue-500 transition-colors duration-200 bg-blue-100 rounded-lg dark:text-blue-400 dark:bg-gray-800" role="alert">
                         <div class="ms-3 text-sm font-medium">
@@ -162,27 +153,24 @@ function getNotes()
                         </button>
                     </div>
                 `;
-            files.forEach(
-                (file_path) => {
-                    let ino = invoke('get_file_ino', {path: file_path});
-                    let arr = file_path.toString().split('/');
-                    let path_to_user = '.../' + arr[arr.length - 3] + '/' + arr[arr.length - 2] + '/' +  arr[arr.length - 1];
-                    let file_name = arr[arr.length - 1].split('.')[0];
-                    let item = `
-                    <button id="note-${ino}" onclick="noteLeftClick(event)" oncontextmenu="noteRightClick(event)" class="flex items-center w-full px-5 py-2 transition-colors duration-200 dark:hover:bg-gray-800 gap-x-2 hover:bg-gray-100 focus:outline-none">
-                        <input id="note-${ino}-id" type="text" hidden="hidden" readonly value="${file_path}">
-                        <i class="fas fa-file-signature"></i>
-                        <div class="text-left rtl:text-right">
-                            <h1 class="text-sm font-medium text-gray-700 capitalize dark:text-white">${file_name}</h1>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">${path_to_user}</p>
-                        </div>
-                    </button>
-                        `;
-                    res += item;
-                }
-            );
-            if(res === "")
-            {
+            for (const file_path of files) {
+                // let ino = invoke('get_file_ino', {path: file_path});
+                let ino = await invoke('get_file_ino', {path: file_path});
+                let arr = file_path.toString().split('/');
+                let path_to_user = '.../' + arr[arr.length - 3] + '/' + arr[arr.length - 2] + '/' + arr[arr.length - 1];
+                let file_name = arr[arr.length - 1].split('.')[0];
+                let item = `
+                <button id="note-${ino}" data-path="${file_path}" onclick="noteLeftClick(event)" oncontextmenu="noteRightClick(event)" class="flex items-center w-full px-5 py-2 transition-colors duration-200 dark:hover:bg-gray-800 gap-x-2 hover:bg-gray-100 focus:outline-none">
+                    <i class="fas fa-file-signature"></i>
+                    <div class="text-left rtl:text-right">
+                        <h1 class="text-sm font-medium text-gray-700 capitalize dark:text-white">${file_name}</h1>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">${path_to_user}</p>
+                    </div>
+                </button>
+                    `;
+                res += item;
+            }
+            if (res === "") {
                 res = `
                         <div class="text-center" style="text-align: center">
                             <h1 class="text-4xl font-bold"><i class="fas fa-file"></i> 您暂时没有笔记哦</h1>

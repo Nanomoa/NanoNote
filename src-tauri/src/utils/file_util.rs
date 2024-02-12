@@ -1,7 +1,14 @@
 use std::fs::File;
 use std::io::{Error, Read, Write};
-use std::os::unix::fs::MetadataExt;
 use chrono::{Datelike, Local, Timelike};
+
+#[cfg(unix)]
+use std::os::unix::fs::MetadataExt;
+#[cfg(windows)]
+use std::os::windows::fs::MetadataExt;
+
+use std::path::Path;
+use cfg_if::cfg_if;
 
 pub struct FileUtil;
 
@@ -12,12 +19,11 @@ impl FileUtil {
 
     // 新建文件并写入内容
     pub fn create_and_write(&self, path: String) -> Result<(), Error> {
-        let file_path = std::path::Path::new(path.as_str());
+        let file_path = Path::new(path.as_str());
 
         if !file_path.exists() {
-            let file_path_str = file_path.to_str().unwrap();
 
-            let mut md_file = match File::create(file_path_str) {
+            let mut md_file = match File::create(file_path) {
                 Ok(file) => file,
                 Err(e) => {
                     return Err(e);
@@ -58,7 +64,8 @@ impl FileUtil {
 
     // 删除文件
     pub fn remove(&self, path: String) -> Result<(), Error> {
-        if let Err(e) = std::fs::remove_file(path) {
+        let file_path = Path::new(path.as_str());
+        if let Err(e) = std::fs::remove_file(file_path) {
             Err(e)
         } else {
             Ok(())
@@ -67,27 +74,32 @@ impl FileUtil {
 
     // 清空原内容写入新内容
     pub fn write_to_md_file(&self, path: &str, content: &str) -> Result<(), Error> {
+        let file_path = Path::new(path);
         let mut file = std::fs::OpenOptions::new()
             .write(true)
             .truncate(true)
-            .open(path)?;
+            .open(file_path)?;
         file.write_all(content.as_bytes())?;
         Ok(())
     }
 
     // 读取文件内容
     pub fn read_from_md_file(&self, path: &str) -> Result<String, Error> {
-        let mut file = File::open(path)?;
+        let file_path = Path::new(path);
+        let mut file = File::open(file_path)?;
         let mut content = String::new();
         file.read_to_string(&mut content)?;
+        println!("{}", content);
         Ok(content)
     }
 
     // 获取目录下所有md文件的绝对路径
     pub fn get_md_files_in_dir(&self, dir: &str) -> Result<Vec<String>, Error> {
+        let dir_path = Path::new(dir);
+
         let mut markdown_files = Vec::new();
 
-        let entries = std::fs::read_dir(dir)?;
+        let entries = std::fs::read_dir(dir_path)?;
 
         for entry in entries {
             let entry = entry?;
@@ -105,23 +117,46 @@ impl FileUtil {
         Ok(markdown_files)
     }
 
-    // 获取文件的inode编号
-    pub fn get_ino(&self, path: String) -> Result<u64, Error> {
-        let file_path = std::path::Path::new(&path);
+    // 获取文件的唯一标识符
+    cfg_if! {
+        if #[cfg(unix)] {
+            pub fn get_file_indentifier(&self, path: String) -> Result<u64, Error> {
+                let file_path = Path::new(&path);
 
-        if !file_path.exists() {
-            Ok(1145141919810)
-        }
+                if !file_path.exists() {
+                    return Ok(1145141919810);
+                }
 
-        let file_path_str = file_path.to_str().unwrap();
+                let file_path_str = file_path.to_str().unwrap();
 
-        let ino = match std::fs::metadata(file_path_str) {
-            Ok(meta_data) => meta_data.ino(),
-            Err(e) => {
-                return Err(e);
+                let ino = match std::fs::metadata(file_path_str) {
+                    Ok(meta_data) => meta_data.ino(),
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+
+                Ok(ino)
             }
-        };
+        } else if #[cfg(windows)] {
+            pub fn get_file_indentifier(&self, path: String) -> Result<u64, Error> {
+                let file_path = std::path::Path::new(&path);
 
-        Ok(ino)
+                if !file_path.exists() {
+                    return Ok(1145141919810);
+                }
+
+                let file_path_str = file_path.to_str().unwrap();
+
+                let index = match std::fs::metadata(file_path_str) {
+                    Ok(meta_data) => meta_data.file_index(),
+                    Err(e) => {
+                        return Err(e);
+                    }
+                };
+
+                Ok(index)
+            }
+        }
     }
 }
