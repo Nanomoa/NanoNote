@@ -1,11 +1,13 @@
 use std::fs::File;
 use std::io::{Error, Write};
+
 use headless_chrome::LaunchOptions;
 use headless_chrome::types::PrintToPdfOptions;
+
 use crate::utils::html_splice;
 
 pub struct ExportMd {
-    content: String
+    content: String,
 }
 
 impl ExportMd {
@@ -29,7 +31,7 @@ impl ExportMd {
                 return Err(e);
             }
         };
-        
+
         if let Err(e) = html_file.write_all(html_content.as_bytes()) {
             Err(e)
         } else {

@@ -6,56 +6,63 @@ pub mod utils;
 // Md转Html
 #[tauri::command(rename_all = "snake_case")]
 fn md_to_html(content: String, file_name: String) {
-  utils::export_md::ExportMd::new(content).to_html(file_name).unwrap();
+    utils::export_md::ExportMd::new(content).to_html(file_name).unwrap();
 }
 
 // Md转Pdf
 #[tauri::command(rename_all = "snake_case")]
 fn md_to_pdf(content: String, file_name: String) {
-  utils::export_md::ExportMd::new(content).to_pdf(file_name).unwrap()
+    utils::export_md::ExportMd::new(content).to_pdf(file_name).unwrap()
 }
 
 // 获取Notes目录下所有文件
 #[tauri::command(rename_all = "snake_case")]
 fn get_all_md_files() -> Vec<String> {
-  let path = std::path::Path::new(&dirs::home_dir().unwrap()).join("NanoNote").join("Notes");
-  utils::file_util::FileUtil::new().get_md_files_in_dir(path.to_str().unwrap()).expect("Error_").into()
+    let path = std::path::Path::new(&dirs::home_dir().unwrap()).join("NanoNote").join("Notes");
+    utils::file_util::FileUtil::new().get_md_files_in_dir(path.to_str().unwrap()).expect("Error_").into()
 }
 
 // 获取文件标识符
 #[tauri::command(rename_all = "snake_case")]
 fn get_file_ino(path: String) -> u64 {
-  utils::file_util::FileUtil::new().get_file_indentifier(path).unwrap()
+    utils::file_util::FileUtil::new().get_file_indentifier(path).unwrap()
 }
 
 // 获取文件内容
 #[tauri::command(rename_all = "snake_case")]
 fn get_file_content(path: String) -> String {
-  // utils::file_util::FileUtil::new().read_from_md_file(&path).unwrap().into()
-  match utils::file_util::FileUtil::new().read_from_md_file(&path) {
-    Ok(content) => content.into(),
-    Err(e) => e.to_string().into()
-  }
+    // utils::file_util::FileUtil::new().read_from_md_file(&path).unwrap().into()
+    match utils::file_util::FileUtil::new().read_from_md_file(&path) {
+        Ok(content) => content.into(),
+        Err(e) => e.to_string().into()
+    }
 }
 
 // 向文件写入内容
 #[tauri::command(rename_all = "snake_case")]
 fn write_to_file(content: String, path: String) {
-  utils::file_util::FileUtil::new().write_to_md_file(path.as_str(), content.as_str()).unwrap();
+    utils::file_util::FileUtil::new().write_to_md_file(path.as_str(), content.as_str()).unwrap();
 }
 
 // 新建文件
 #[tauri::command(rename_all = "snake_case")]
 fn create_new_note(file_name: String) {
-  let path = std::path::Path::new(&dirs::home_dir().unwrap()).join("NanoNote").join("Notes").join(file_name.as_str());
-  utils::file_util::FileUtil::new().create_and_write(path.to_str().unwrap().to_string()).unwrap();
+    let path = std::path::Path::new(&dirs::home_dir().unwrap()).join("NanoNote").join("Notes").join(file_name.as_str());
+    utils::file_util::FileUtil::new().create_and_write(path.to_str().unwrap().to_string()).unwrap();
+}
+
+// 重命名文件
+#[tauri::command(rename_all = "snake_case")]
+fn rename_note(path: String, new_name: String) {
+    let file_path = std::path::Path::new(path.as_str());
+    utils::file_util::FileUtil::new().rename(file_path.to_str().unwrap(), new_name).unwrap()
 }
 
 // 删除文件
 #[tauri::command(rename_all = "snake_case")]
-fn delete_note(file_name: String) {
-  let path = std::path::Path::new(&dirs::home_dir().unwrap()).join("NanoNote").join("Notes").join(file_name.as_str());
-  utils::file_util::FileUtil::new().remove(path.to_str().unwrap().to_string()).unwrap();
+fn delete_note(path: String) {
+    let file_path = std::path::Path::new(path.as_str());
+    utils::file_util::FileUtil::new().remove(file_path.to_str().unwrap().to_string()).unwrap();
 }
 
 // 获取导出目录
@@ -66,28 +73,28 @@ fn get_exp_dir() -> String {
 }
 
 fn main() {
-  // 首次进入应用在用户目录创建NanoNote目录
-  let user_dir = match dirs::home_dir() {
-    Some(dir) => dir,
-    None => {
-      eprintln!("Error: Can't get the user dir!");
-      return;
-    }
-  };
+    // 首次进入应用在用户目录创建NanoNote目录
+    let user_dir = match dirs::home_dir() {
+        Some(dir) => dir,
+        None => {
+            eprintln!("Error: Can't get the user dir!");
+            return;
+        }
+    };
 
-  let nano_note_dir = std::path::Path::new(&user_dir).join("NanoNote");
-  if !nano_note_dir.exists() {
-    std::fs::create_dir_all(&nano_note_dir).unwrap();
-  }
-
-  // 创建 Notes, Pdf, Html 子目录
-  let sub_dirs = ["Notes", "Pdf", "Html"];
-  for dir in sub_dirs.iter() {
-    let sub_dir = nano_note_dir.join(dir);
-    if !sub_dir.exists() {
-      std::fs::create_dir_all(&sub_dir).unwrap();
+    let nano_note_dir = std::path::Path::new(&user_dir).join("NanoNote");
+    if !nano_note_dir.exists() {
+        std::fs::create_dir_all(&nano_note_dir).unwrap();
     }
-  }
+
+    // 创建 Notes, Pdf, Html 子目录
+    let sub_dirs = ["Notes", "Pdf", "Html"];
+    for dir in sub_dirs.iter() {
+        let sub_dir = nano_note_dir.join(dir);
+        if !sub_dir.exists() {
+            std::fs::create_dir_all(&sub_dir).unwrap();
+        }
+    }
 
     // 构建应用
     tauri::Builder::default()
@@ -100,7 +107,8 @@ fn main() {
         write_to_file,
         create_new_note,
         delete_note,
-            get_exp_dir
+            get_exp_dir,
+            rename_note
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

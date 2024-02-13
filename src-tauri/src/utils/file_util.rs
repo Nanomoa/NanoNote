@@ -1,20 +1,19 @@
 use std::fs::File;
 use std::io::{Error, Read, Write};
-use chrono::{Datelike, Local, Timelike};
-
 #[cfg(unix)]
 use std::os::unix::fs::MetadataExt;
 #[cfg(windows)]
 use std::os::windows::fs::MetadataExt;
-
 use std::path::Path;
+
 use cfg_if::cfg_if;
+use chrono::{Datelike, Local, Timelike};
 
 pub struct FileUtil;
 
 impl FileUtil {
     pub fn new() -> Self {
-        FileUtil { }
+        FileUtil {}
     }
 
     // 新建文件并写入内容
@@ -22,7 +21,6 @@ impl FileUtil {
         let file_path = Path::new(path.as_str());
 
         if !file_path.exists() {
-
             let mut md_file = match File::create(file_path) {
                 Ok(file) => file,
                 Err(e) => {
@@ -65,6 +63,23 @@ date: {}
     pub fn remove(&self, path: String) -> Result<(), Error> {
         let file_path = Path::new(path.as_str());
         if let Err(e) = std::fs::remove_file(file_path) {
+            Err(e)
+        } else {
+            Ok(())
+        }
+    }
+
+    // 重命名文件
+    pub fn rename(&self, path: &str, new_name: String) -> Result<(), Error> {
+        let mut path_clone = String::from(path);
+        let slash_position = path_clone.rfind('/').unwrap() + 1;
+        let dot_position = path_clone.rfind('.').unwrap();
+        path_clone.replace_range(slash_position..dot_position, &*new_name);
+
+        let file_path = Path::new(path);
+        let new_file_path = Path::new(path_clone.as_str());
+
+        if let Err(e) = std::fs::rename(file_path, new_file_path) {
             Err(e)
         } else {
             Ok(())

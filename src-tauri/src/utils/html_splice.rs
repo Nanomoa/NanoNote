@@ -1,5 +1,5 @@
 pub struct HtmlSplice {
-    content: String
+    content: String,
 }
 
 impl HtmlSplice {
