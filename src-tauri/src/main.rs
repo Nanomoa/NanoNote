@@ -89,9 +89,9 @@ fn main() {
     }
   }
 
-  // 构建应用
-  tauri::Builder::default()
-      .invoke_handler(tauri::generate_handler![
+    // 构建应用
+    tauri::Builder::default()
+        .invoke_handler(tauri::generate_handler![
         md_to_html,
         md_to_pdf,
         get_all_md_files,
@@ -100,8 +100,8 @@ fn main() {
         write_to_file,
         create_new_note,
         delete_note,
-          get_exp_dir
-      ])
-      .run(tauri::generate_context!())
-      .expect("error while running tauri application");
+            get_exp_dir
+        ])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }

@@ -148,8 +148,57 @@ function closeTipPopup()
     }
 }
 
+// 显示提示信息
+function showAlert(msg, type)
+{
+    let alertIconContent;
+    let color;
+    if(type === "info")
+    {
+        alertIconContent = "fa-info-circle";
+        color = "#ADD8E6";
+    } else if(type === "error")
+    {
+        alertIconContent = "fa-exclamation-triangle";
+        color = "#FFB6C1";
+    } else if(type === "success")
+    {
+        alertIconContent = "fa-check-circle";
+        color = "#90EE90";
+    }
+
+    let alertIcon = `<i class="fas ${alertIconContent}"></i>&nbsp;&nbsp;`
+
+    let alertDiv = document.createElement('div');
+    alertDiv.innerHTML = alertIcon + msg;
+    alertDiv.style.backgroundColor = color;
+    alertDiv.style.marginBottom = '10px';
+    alertDiv.style.padding = '10px';
+    alertDiv.style.borderRadius = '5px';
+    let alertContainer = document.getElementById('alertContainer');
+    alertContainer.appendChild(alertDiv);
+
+    setTimeout(function()
+    {
+        alertContainer.removeChild(alertDiv);
+    }, 2000);
+}
+
+// 删除笔记
+function deleteNote()
+{
+
+}
+
+// 重命名笔记
+function renameNote()
+{
+
+}
+
 // 新建笔记
-async function createNote() {
+async function createNote()
+{
     let path = await invoke('get_exp_dir');
     let msg = `新建笔记于 ${path}/Note`;
     showTipPopup(msg, "确认新建", "请输入文件名(默认为NanoNote)");
@@ -165,6 +214,7 @@ async function createNote() {
         }
         invoke('create_new_note', {file_name: filename + ".md"});
         closeTipPopup();
+        showAlert("新建文件成功", "success");
         getNotes().then(() => {});
     });
 
@@ -188,8 +238,9 @@ async function exportHtml()
         }
         invoke('md_to_html', {content: vditor.getHTML(), file_name: filename + ".html"});
         closeTipPopup();
+        showAlert("导出成功", "success");
+        getNotes().then(() => {});
     });
-
 }
 
 // Md文本导出Pdf
@@ -211,6 +262,8 @@ async function exportPdf()
         invoke('md_to_pdf', {content: vditor.getHTML(), file_name: filename + ".pdf"});
         closeTipPopup();
     });
+    // showAlert("导出成功", "success");
+    // getNotes().then(() => {});
 }
 
 async function getNotes()
@@ -259,5 +312,5 @@ async function getNotes()
             }
             document.getElementById('note-list').innerHTML = res;
         }
-    )
+    );
 }
