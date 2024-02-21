@@ -1,15 +1,6 @@
-<style>
-  table {
-    width: 100%;
-  }
-  img {
-    width: 100%;
-    height: auto;
-  }
-</style>
 <div align="center">
   <h1>NanoNote</h1>
-</div>
+  
 <table>
   <tr>
     <td><img src="https://img2.imgtp.com/2024/02/21/B7qlGwfi.png" alt="图片3" width="200"/></td>
@@ -20,6 +11,7 @@
     <td><img src="https://img2.imgtp.com/2024/02/21/2vhD7hLI.png" alt="图片2" width="200"/></td>
   </tr>
 </table>
+</div>
 
 ## Description
 **NanoNote** is a cross-platform WYSIWYG Markdown text editor developed using the Rust language in conjunction with the Tauri framework. The core of the editor is based on the [Vditor](https://github.com/Vanessa219/vditor), with a powerful set of features including but not limited to outlining, mathematical formulas, brain diagrams, charts, flowcharts, Gantt charts, timing diagrams, pentagrams, title anchors, code highlighting, Graphviz rendering, PlantUML UML diagrams, task lists, etc. NanoNote also provides real-time caching to prevent accidental loss of edited content, automatic conversion of pasted HTML to Markdown format, and a real-time cache to prevent accidental loss of edited content, making the editing process easier. NanoNote also provides a real-time caching feature to prevent accidental loss of editing content, and automatic conversion of pasted HTML to Markdown format to make the editing process more efficient. In addition, the editor supports easy export of Markdown files to HTML pages and PDF files, providing flexible document output options to meet different user needs.
