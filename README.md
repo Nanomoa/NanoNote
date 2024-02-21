@@ -1,7 +1,7 @@
 <div align="center">
   <h1>NanoNote</h1>
   
-<table>
+<table align="left">
   <tr>
     <td><img src="https://img2.imgtp.com/2024/02/21/B7qlGwfi.png" alt="图片3" width="200"/></td>
     <td><img src="https://img2.imgtp.com/2024/02/21/JcTS3Qvc.png" alt="图片4" width="200"/></td>
