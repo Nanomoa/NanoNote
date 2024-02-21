@@ -25,19 +25,22 @@
 <br><br>
 
 ## Description
-**NanoNote** is a cross-platform WYSIWYG Markdown text editor developed using the Rust language in conjunction with the Tauri framework. The core of the editor is based on the [Vditor](https://github.com/Vanessa219/vditor), with a powerful set of features including but not limited to outlining, mathematical formulas, brain diagrams, charts, flowcharts, Gantt charts, timing diagrams, pentagrams, title anchors, code highlighting, Graphviz rendering, PlantUML UML diagrams, task lists, etc. NanoNote also provides real-time caching to prevent accidental loss of edited content, automatic conversion of pasted HTML to Markdown format, and a real-time cache to prevent accidental loss of edited content, making the editing process easier. NanoNote also provides a real-time caching feature to prevent accidental loss of editing content, and automatic conversion of pasted HTML to Markdown format to make the editing process more efficient. In addition, the editor supports easy export of Markdown files to HTML pages and PDF files, providing flexible document output options to meet different user needs.
+**NanoNote** is a cross-platform WYSIWYG Markdown text editor based on the Electron framework. The core of the editor is based on the Vditor editor, with a powerful set of features including but not limited to outlining, mathematical formulas, brain maps, diagrams, flowcharts, Gantt charts, timing charts, quintiles, title anchors, code highlighting, Graphviz rendering, PlantUML UML diagrams, task lists, etc. NanoNote also provides real-time caching to prevent accidental loss of editorial content, and pasting HTML is automatically converted to Markdown format, making the editing process more efficient. NanoNote also provides a real-time caching feature to prevent accidental loss of editing content, and automatic conversion of pasted HTML to Markdown format to make the editing process more efficient. In addition, the editor supports easy export of Markdown files to HTML pages and PDF files, providing flexible document output options to meet different user needs.
 
 ## Build
 1. Clone the github repository locally.
-```
-git clone https://github.com/Nanomoa/NanoNote.git
-``` 
-2. Use RustRover to open the repository you just cloned locally.
-3. Refreshing `src-tauri/Cargo.toml` to load dependencies
+   ```
+   git clone https://github.com/Nanomoa/NanoNote.git
+   ``` 
+2. Open the repository you just cloned locally in an editor (e.g. VSCode, WebStorm)
+3. Install the required packages with npm
+   ```
+   npm install
+   ```
 4. Run the project
-```
-cargo tauri dev
-```
+   ```
+   npm start
+   ```
 
 ## Tips
 The export pdf function relies on `html2pdf` and `headless_chromium` to realize, please make sure that **Google Chrome / Chrominum / Microsoft Edge** (one of the three can be) is installed on your machine.
