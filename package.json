@@ -1,0 +1,14 @@
+{
+  "name": "nano-note",
+  "version": "1.0.0",
+  "description": "A WYSIWYG Markdown Editor!",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "Nanomoa",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^28.2.3"
+  }
+}

@@ -1,0 +1,193 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NanoNote</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="./dist/vditor/dist/index.css" />
+    <script src="./dist/vditor/dist/index.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        body {
+            overflow: hidden;
+            border-radius: 10px;
+        }
+        #title-bar {
+            -webkit-app-region: drag;
+            -webkit-user-select: none;
+        }
+        #window-control {
+            -webkit-app-region: no-drag;
+        }
+        button {
+            -webkit-app-region: no-drag;
+        }
+        .active-button {
+        }
+    </style>
+</head>
+<body data-theme="pastel" class="bg-base-200">
+
+<div id="title-bar" class="navbar bg-base-200">
+    <div class="flex-none ml-6">
+        <svg width="18" height="18" viewBox="0 0 48 48" class="w-5 h-5" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 42H43" stroke="currentColor" stroke-width="4" stroke-linecap="butt" stroke-linejoin="bevel"></path><path d="M11 26.7199V34H18.3172L39 13.3081L31.6951 6L11 26.7199Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="bevel"></path>
+        </svg>
+    </div>
+    <div class="flex-1">
+        <a class="btn btn-ghost text-xl">NanoNote</a>
+    </div>
+    <div onclick="minimizeWindow()" class="flex-none mr-6">
+        <button id="minimize-window" class="btn btn-square btn-sm btn-primary ml-1 mr-1">
+            <i class="fas fa-window-minimize"></i>
+        </button>
+        <button onclick="closeWindow()" class="btn btn-square btn-sm btn-primary ml-1 mr-1">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+</div>
+
+<div id="main-content" class="min-h-screen flex">
+    <nav class="flex p-2">
+        <div class="flex flex-col h-full">
+            <!-- 上半部分 -->
+            <div class="h-1/10">
+                <div class="avatar indicator p-1 mt-4">
+                    <div class="w-16 h-16 rounded-lg">
+                        <img alt="logo" src="http://q1.qlogo.cn/g?b=qq&nk=25569983&s=640" />
+                    </div>
+                </div>
+            </div>
+            <!-- 下半部分 -->
+            <div class="h-9/10 mt-2">
+                <button onclick="note_category.showModal()" class="btn btn-primary w-full">
+                    <i class="fas fa-list"></i>
+                </button>
+
+                <ul class="menu w-18 bg-base-300 rounded-box mb-2 mt-2">
+                    <li>
+                        <a class="tooltip tooltip-right" data-tip="新建笔记">
+                            <i class="fas fa-plus"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="tooltip tooltip-right" data-tip="刷新笔记列表">
+                            <i class="fas fa-redo"></i>
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="menu w-18 bg-base-300 rounded-box mb-2 mt-2">
+                    <li>
+                        <a class="tooltip tooltip-right" data-tip="导出Html">
+                            <i class="fas fa-file-code"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="tooltip tooltip-right" data-tip="导出Pdf">
+                            <i class="fas fa-file-pdf"></i>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="fixed bottom-0 flex justify-center mb-6 ml-3">
+                    <button onclick="toggleMod()" class="btn btn-square btn-primary">
+                        <i id="day-mod" class="fas fa-sun hidden"></i>
+                        <i id="night-mod" class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="note-list" data-path="" class="card w-80 h-full shadow-xl bg-primary/20 ml-4 mr-4">
+            <h2 id="note-list-title" class="card-title mt-4 ml-10 mb-4">我的笔记</h2>
+            <div id="note-list-content" class="card-body h-screen overflow-y-auto pb-40 pt-1">
+
+                <button class="w-full bg-secondary/30 rounded-lg mt-1 mb-1 active-button">
+                    <div class="p-4">
+                        <p class="card-title">Markdown教程</p>
+                    </div>
+                </button>
+
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 min-w-0 mt-2 ml-2 mr-4 mb-6">
+        <div class="card w-full h-full shadow-xl bg-neutral-content/10">
+            <div class="card-body">
+                <div class="flex">
+                    <div class="flex-1">
+                        <input id="title-input" type="text" placeholder="请输入标题" class="input input-bordered input-primary w-full font-bold" />
+                    </div>
+                    <div class="ml-2">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-sd-card"></i>
+                            保存
+                        </button>
+                    </div>
+                </div>
+                <div id="vditor" class="vditor"></div>
+            </div>
+        </div>
+    </main>
+
+    <dialog id="note_category" class="modal">
+        <div class="modal-box w-11/12 max-w-5xl h-screen glass">
+            <div class="flex justify-between">
+                <div class="card-title">笔记目录</div>
+                <div class="flex">
+                    <ul class="menu menu-horizontal bg-base-200 rounded-box">
+                        <li>
+                            <a class="tooltip" data-tip="新建目录">
+                                <i class="fas fa-plus"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="tooltip" data-tip="刷新目录列表">
+                                <i class="fas fa-redo"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <form method="dialog" class="ml-2">
+                        <button class="btn btn-square"><i class="fas fa-times"></i> </button>
+                    </form>
+                </div>
+            </div>
+            <div class="grid grid-cols-3 gap-4 py-4">
+
+                <div class="card w-full bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">测试目录</h2>
+                        <p>目录介绍目录介绍</p>
+                        <div class="card-actions justify-end">
+                            <button class="btn btn-primary">打开目录</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card w-full bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title">测试</h2>
+                        <p>介绍</p>
+                        <div class="card-actions justify-end">
+                            <button class="btn btn-primary">打开目录</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </dialog>
+
+</div>
+
+<script src="./dist/source/js/main.js"></script>
+<script src="./dist/source/js/renderer.js"></script>
+
+</body>
+</html>
