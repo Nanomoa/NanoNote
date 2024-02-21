@@ -1,3 +1,12 @@
+<style>
+  table {
+    width: 100%;
+  }
+  img {
+    width: 100%;
+    height: auto;
+  }
+</style>
 <div align="center">
   <h1>NanoNote</h1>
 </div>
