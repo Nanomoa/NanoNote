@@ -12,6 +12,9 @@
 
 # NanoNote
 
+![GitHub Repo stars](https://img.shields.io/github/stars/Nanomoa/NanoNote)
+
+
 <br>
 
 ## A cross-platform WYSIWYG markdown text editor based on the Electron framework.
