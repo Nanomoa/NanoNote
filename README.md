@@ -12,7 +12,7 @@
 
 # NanoNote
 
-![GitHub Repo stars](https://img.shields.io/github/stars/Nanomoa/NanoNote)
+![GitHub Repo stars](https://img.shields.io/github/stars/Nanomoa/NanoNote) &nbsp;
 ![GitHub repo size](https://img.shields.io/github/repo-size/Nanomoa/NanoNote)
 
 
