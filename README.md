@@ -51,6 +51,6 @@ This project is under development, and the functionality is not complete at this
 
 
 ## Express gratitude (esp. in public)
-** [Electron](https://github.com/electron/electron) :** Build cross-platform desktop apps with JavaScript, HTML, and CSS.
+[Electron](https://github.com/electron/electron) : Build cross-platform desktop apps with JavaScript, HTML, and CSS.
 
-** [Vditor](https://github.com/Vanessa219/vditor) :**An In-browser Markdown editor, support WYSIWYG (Rich Text), Instant Rendering (Typora-like) and Split View modes.
+[Vditor](https://github.com/Vanessa219/vditor) : An In-browser Markdown editor, support WYSIWYG (Rich Text), Instant Rendering (Typora-like) and Split View modes.
