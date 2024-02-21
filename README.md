@@ -11,6 +11,9 @@
 </table>
 
 # NanoNote
+
+<br>
+
 ## A cross-platform WYSIWYG markdown text editor based on the Electron framework.
 
 </div>
