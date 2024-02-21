@@ -1,6 +1,4 @@
 <div align="center">
-  <h1>NanoNote</h1>
-  
 <table align="left">
   <tr>
     <td><img src="https://img2.imgtp.com/2024/02/21/B7qlGwfi.png" alt="图片3" width="200"/></td>
@@ -12,6 +10,7 @@
   </tr>
 </table>
 
+# NanoNote
 ## A cross-platform WYSIWYG markdown text editor based on the Electron framework.
 
 </div>
