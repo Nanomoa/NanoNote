@@ -11,9 +11,10 @@
     <td><img src="https://img2.imgtp.com/2024/02/21/2vhD7hLI.png" alt="图片2" width="200"/></td>
   </tr>
 </table>
-</div>
 
 ## A cross-platform WYSIWYG markdown text editor based on the Electron framework.
+
+</div>
 
 <br>
 <br>
