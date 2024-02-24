@@ -1,5 +1,5 @@
 let vditor = new Vditor('vditor', {
-    "height": window.innerHeight - document.getElementById('title-input').offsetHeight - 120,
+    "height": window.innerHeight - document.getElementById('title-bar').offsetHeight - 20,
     "theme": "classic",
     "placeholder": "请输入正文",
     "tab": '\t',
@@ -35,13 +35,13 @@ function toggleMod()
     {
         dayMod.classList.remove('hidden');
         nightMod.classList.add('hidden');
-        document.body.setAttribute('data-theme', 'night')
+        document.body.setAttribute('data-theme', 'night');
         vditor.setTheme('dark', 'dark');
     } else
     {
         nightMod.classList.remove('hidden');
         dayMod.classList.add('hidden');
-        document.body.setAttribute('data-theme', 'pastel')
+        document.body.setAttribute('data-theme', 'pastel');
         vditor.setTheme('classic', 'light');
     }
 }
